@@ -1,0 +1,25 @@
+/* table-container: テーブルの配置や最大幅を制御する親要素（任意） */
+.table-container {
+    max-width: 800px;
+    margin: 20px auto; /* ページの中央に配置 */
+}
+
+table {
+    /* 罫線を一本の線に結合 (重要) */
+    border-collapse: collapse; 
+    /* テーブルの幅をコンテナの幅に合わせる */
+    width: 100%;
+    /* 角丸を適用するために overflow を hidden に設定 */
+    border-radius: 8px; 
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 影をつけて立体感を出す */
+}
+
+th, td {
+    /* 標準の罫線 */
+    border: 1px solid #ddd;
+    /* セル内のパディング（余白） */
+    padding: 12px 15px; 
+    /* テキストを左寄せ */
+    text-align: left;
+}
