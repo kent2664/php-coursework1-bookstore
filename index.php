@@ -1,5 +1,6 @@
 <?php
 
+//book inventory
 $books = [
     [
         'title' => 'Dune',
@@ -27,7 +28,7 @@ function applyDiscounts(array &$books) {
     for($idx = 0; $idx < sizeof($books); $idx++){
         if($books[$idx]["genre"] === "Science Fiction"){
             //If it science fiction , it should be discounted
-            $books[$idx]["price"] = $books[$idx]["price"] * 0.9;
+            $books[$idx]["price"] = round($books[$idx]["price"] * 0.9,2);
         }
     }
 
@@ -37,39 +38,41 @@ function applyDiscounts(array &$books) {
 //question 2
 applyDiscounts($books);
 
-//print_r($books);
+
 echo '<link rel="stylesheet" href="style.css">';
 define("SRC_DIR","./");
     switch($_SERVER["REQUEST_METHOD"]){
         case "GET":
+            //check the APi is booklist
             switch(basename($_SERVER["PATH_INFO"])){
                 case "booklist":
-                    echo '<link rel="stylesheet" href="style.css">';
-                    echo "<h1>This is book list</h1>";
-                    echo '<main>';
-                    echo '<table class="table-container" style="border: 1px solid black;">';
-                    echo '<thead style="border: 1px solid black;">';
-                    echo '<th style="border: 1px solid black;">';
+                    echo '<link rel="stylesheet" href="/phpnov1/php-coursework1-bookstore/style.css">';
+                    echo '<h1 style="text-align:center;">This is book list</h1>';
+                    echo '<main class="table-container back">';
+                    echo '<table>';
+                    echo '<thead>';
+                    echo '<th>';
                     echo 'Title';
                     echo '</th>';
-                    echo '<th style="border: 1px solid black;">';
+                    echo '<th>';
                     echo 'Author';
                     echo '</th>';
-                    echo '<th style="border: 1px solid black;">';
+                    echo '<th>';
                     echo 'Genre';
                     echo '</th>';
-                    echo '<th style="border: 1px solid black;">';
+                    echo '<th>';
                     echo 'Original / Discounted price';
                     echo '</th>';
                     echo '</thead>';
                     echo '<tbody>';
                     foreach($books as $book){
+                        //information of books
                         echo "<tr>";
                              echo "<td>".$book["title"]."</td>";
                              echo "<td>".$book["author"]."</td>";
                              
                              echo "<td>".$book["genre"]."</td>";
-                             echo "<td>".($book["genre"] === "Science Fiction" ?"discounted:". $book["price"] * 0.9 . "original :". $book["price"]:$book["price"])."</td>";
+                             echo "<td>".($book["genre"] === "Science Fiction" ?"discounted:". $book["price"]. "&nbsp;original :". round($book["price"] / 0.9,2) :$book["price"])."</td>";
                             echo "</tr>";
                     }
                    
@@ -83,23 +86,25 @@ define("SRC_DIR","./");
             }
             break;
         case "POST":
-            // echo $_SERVER["PATH_INFO"];
+            // when the form submit, this case will be executed.
             switch(basename($_SERVER["PATH_INFO"])){
                 case "input":
                     //check parameters
                     if(isset($_REQUEST["title"]) && isset($_REQUEST["author"]) && isset($_REQUEST["genre"]) && isset($_REQUEST["price"])){
-                        echo $_REQUEST["title"];
+                        echo "Added :".$_REQUEST["title"]."<br>";
                         $title = $_REQUEST["title"];
                         $author = $_REQUEST["author"];
                         $genre = $_REQUEST["genre"];
                         $price = $_REQUEST["price"];
 
+                        //make a book object
                         $addBook = [
                                    "title" => $title,
                                    "author" => $author,
                                    "genre" => $genre,
                                    "price" => $price];
 
+                        //add the object to book list
                         $books[] = $addBook;
 
                         //print_r($books);
@@ -114,19 +119,22 @@ define("SRC_DIR","./");
                         //writing log 
                         if(is_dir(SRC_DIR)){
                             $readDir = SRC_DIR;
-                            $file = fopen($readDir."bookstore_log.txt","w");
+                            //to avoid overwriting the log, use "append" mode.
+                            $file = fopen($readDir."bookstore_log.txt","a");
                             fwrite($file,"[".date("Y-m-d h:i:s"."]"));
                             fwrite($file,"| Book title: ".$title."|");
                             fwrite($file,"| IP address: ".$_SERVER['REMOTE_ADDR']."|");
-                            fwrite($file,"| User agent: ".$_SERVER['HTTP_USER_AGENT']."|");
+                            fwrite($file,"| User agent: ".$_SERVER['HTTP_USER_AGENT']."| \r\n");
                             fclose($file);
-                                // httpResponseHandler("File ".$data->filename." created.",201);
+
                         }else{
-                            echo "THIS IS WHAT???";
+                            echo "Directory error";
+                            http_response_code(404);
                         }
   
                     } else {
                         echo "input data is not correct";
+                        http_response_code(403);
                     }
                 break;
             }
