@@ -114,17 +114,15 @@ define("SRC_DIR","./");
                         //writing log 
                         if(is_dir(SRC_DIR)){
                             $readDir = SRC_DIR;
-                            if(!file_exists($readDir)){
-                                $file = fopen($readDir."bookstore_log.txt","w");
-                                fwrite($file,"Time Stamp: ".date("Y-m-d h:i:s"));
-                                fwrite($file,"Book title: ".$title);
-                                fwrite($file,"IP address: ".$title);
-                                fwrite($file,"User agent: ".$title);
-                                fclose($file);
-                                httpResponseHandler("File ".$data->filename." created.",201);
-                            }else{
-                                httpResponseHandler("File ".$data->filename." already exists.",403);
-                            }
+                            $file = fopen($readDir."bookstore_log.txt","w");
+                            fwrite($file,"[".date("Y-m-d h:i:s"."]"));
+                            fwrite($file,"| Book title: ".$title."|");
+                            fwrite($file,"| IP address: ".$_SERVER['REMOTE_ADDR']."|");
+                            fwrite($file,"| User agent: ".$_SERVER['HTTP_USER_AGENT']."|");
+                            fclose($file);
+                                // httpResponseHandler("File ".$data->filename." created.",201);
+                        }else{
+                            echo "THIS IS WHAT???";
                         }
   
                     } else {
